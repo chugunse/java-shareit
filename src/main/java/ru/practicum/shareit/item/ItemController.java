@@ -1,12 +1,44 @@
 package ru.practicum.shareit.item;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.service.ItemService;
 
-/**
- * TODO Sprint add-controllers.
- */
+import javax.validation.Valid;
+import java.util.Collection;
+
 @RestController
 @RequestMapping("/items")
+@AllArgsConstructor
 public class ItemController {
+    private final ItemService itemService;
+
+    @PostMapping
+    public ItemDto addItem(@Valid @RequestBody ItemDto itemDto,
+                           @RequestHeader(value = "X-Sharer-User-Id") Long userId) {
+        return itemService.addItem(itemDto, userId);
+    }
+
+    @PatchMapping("/{itemId}")
+    public ItemDto updateItem(@RequestBody ItemDto itemDto,
+                              @RequestHeader(value = "X-Sharer-User-Id") Long userId,
+                              @PathVariable long itemId) {
+        return itemService.updateItem(itemDto, itemId, userId);
+    }
+
+    @GetMapping
+    public Collection<ItemDto> getAllUsersItems(@RequestHeader(value = "X-Sharer-User-Id") Long userId) {
+        return itemService.getAllUsersItems(userId);
+    }
+
+    @GetMapping("/{itemId}")
+    public ItemDto getItemById(@PathVariable Long itemId) {
+        return itemService.getItemById(itemId);
+    }
+
+    @GetMapping("/search")
+    public Collection<ItemDto> searchItems(@RequestParam String text) {
+        return itemService.searchAvailableItems(text);
+    }
 }
