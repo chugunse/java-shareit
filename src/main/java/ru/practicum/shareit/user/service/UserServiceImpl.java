@@ -26,8 +26,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(Long userId) {
-        return toUserDto(userRepository.getUserById(userId).
-                orElseThrow(() -> new NotFoundException(String.format("user по id %d не найден", userId))));
+        return toUserDto(userRepository.getUserById(userId)
+                .orElseThrow(() -> new NotFoundException(String.format("user по id %d не найден", userId))));
     }
 
     @Override
@@ -51,8 +51,8 @@ public class UserServiceImpl implements UserService {
 
     private void checkDuplicatEmail(UserDto userTest) {
         if (userTest.getEmail() != null) {
-            if (getAllUsers().stream().filter(user -> !user.getId().equals(userTest.getId())).
-                    anyMatch(user -> user.getEmail().equals(userTest.getEmail()))) {
+            if (getAllUsers().stream().filter(user -> !user.getId().equals(userTest.getId()))
+                    .anyMatch(user -> user.getEmail().equals(userTest.getEmail()))) {
                 throw new DuplicateException("введенный email уже используется");
             }
         }

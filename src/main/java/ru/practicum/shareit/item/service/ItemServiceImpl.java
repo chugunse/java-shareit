@@ -44,10 +44,9 @@ public class ItemServiceImpl implements ItemService {
         getItemById(itemId);
         userService.getUserById(userId);
         itemDto.setId(itemId);
-        if (!itemRepository.getOwner(itemId).getId().
-                equals(userService.getUserById(userId).getId())) {
-            throw new AccessException(String.
-                    format("пользователь с id = %d не имеет доступа правки item с id = %d", userId, itemId));
+        if (!itemRepository.getOwner(itemId).getId().equals(userService.getUserById(userId).getId())) {
+            throw new AccessException(String
+                    .format("пользователь с id = %d не имеет доступа правки item с id = %d", userId, itemId));
         }
         return toItemDto(itemRepository.updateItem(toItem(itemDto), userId));
     }
