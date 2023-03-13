@@ -7,7 +7,7 @@ import ru.practicum.shareit.exceptions.model.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.storage.UserRepository;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.user.service.UserMapper.toUser;
@@ -31,8 +31,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Collection<UserDto> getAllUsers() {
-        return userRepository.getAllUsers().stream().map(UserMapper::toUserDto).collect(Collectors.toList());
+    public List<UserDto> getAllUsers() {
+        return userRepository.getAllUsers().stream()
+                .map(UserMapper::toUserDto).collect(Collectors.toList());
     }
 
     @Override
@@ -51,7 +52,8 @@ public class UserServiceImpl implements UserService {
 
     private void checkDuplicatEmail(UserDto userTest) {
         if (userTest.getEmail() != null) {
-            if (getAllUsers().stream().filter(user -> !user.getId().equals(userTest.getId()))
+            if (getAllUsers().stream()
+                    .filter(user -> !user.getId().equals(userTest.getId()))
                     .anyMatch(user -> user.getEmail().equals(userTest.getEmail()))) {
                 throw new DuplicateException("введенный email уже используется");
             }

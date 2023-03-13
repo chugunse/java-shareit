@@ -3,7 +3,7 @@ package ru.practicum.shareit.user.service;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.dto.UserDto;
 
-import java.util.Collection;
+import java.util.List;
 
 @Service
 public interface UserService {
@@ -11,7 +11,7 @@ public interface UserService {
 
     UserDto getUserById(Long userId);
 
-    Collection<UserDto> getAllUsers();
+    List<UserDto> getAllUsers();
 
     UserDto updateUser(UserDto userDto, Long userId);
 

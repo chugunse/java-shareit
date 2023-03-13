@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.util.Variables;
 
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/items")
@@ -16,19 +18,19 @@ public class ItemController {
 
     @PostMapping
     public ItemDto addItem(@Valid @RequestBody ItemDto itemDto,
-                           @RequestHeader(value = "X-Sharer-User-Id") Long userId) {
+                           @RequestHeader(value = Variables.HEADER_USER_ID) Long userId) {
         return itemService.addItem(itemDto, userId);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(@RequestBody ItemDto itemDto,
-                              @RequestHeader(value = "X-Sharer-User-Id") Long userId,
+                              @RequestHeader(value = Variables.HEADER_USER_ID) Long userId,
                               @PathVariable long itemId) {
         return itemService.updateItem(itemDto, itemId, userId);
     }
 
     @GetMapping
-    public Collection<ItemDto> getAllUsersItems(@RequestHeader(value = "X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> getAllUsersItems(@RequestHeader(value = Variables.HEADER_USER_ID) Long userId) {
         return itemService.getAllUsersItems(userId);
     }
 
