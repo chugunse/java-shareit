@@ -1,21 +1,20 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class ItemDto {
+public class UserDto {
     private Long id;
     @NotBlank(message = "поле 'name' не может быть пустым")
     private String name;
-    @NotBlank(message = "поле 'description' не может быть пустым")
-    private String description;
-    @NotNull
-    private Boolean available;
+    @NotBlank(message = "поле 'email' пустое")
+    @Email(message = "поле 'email' неподходящий формат")
+    private String email;
 }
