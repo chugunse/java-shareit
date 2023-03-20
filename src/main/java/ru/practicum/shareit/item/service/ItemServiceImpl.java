@@ -20,6 +20,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -40,6 +41,7 @@ public class ItemServiceImpl implements ItemService {
 
     private final CommentRepository commentRepository;
 
+    @Transactional
     @Override
     public ItemDto addItem(ItemDto itemDto, Long userId) {
         userService.getUserById(userId);
@@ -48,6 +50,7 @@ public class ItemServiceImpl implements ItemService {
         return toItemDto(itemRepository.save(item));
     }
 
+    @Transactional
     @Override
     public ItemDto getItemById(Long itemId, Long userId) {
         ItemDto result;
@@ -81,6 +84,7 @@ public class ItemServiceImpl implements ItemService {
         return itemDto;
     }
 
+    @Transactional
     @Override
     public List<ItemDto> getAllUsersItems(Long userId) {
         List<ItemDto> item = itemRepository.findAllByOwnerId(userId)
@@ -88,6 +92,7 @@ public class ItemServiceImpl implements ItemService {
         return item.stream().map(this::setBookings).collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public ItemDto updateItem(ItemDto itemDto, Long itemId, Long userId) {
         Item item = itemRepository.findById(itemId)
@@ -109,6 +114,7 @@ public class ItemServiceImpl implements ItemService {
         return toItemDto(itemRepository.save(item));
     }
 
+    @Transactional
     @Override
     public List<ItemDto> searchAvailableItems(String text) {
         if (text == null || text.isBlank()) {
@@ -118,6 +124,7 @@ public class ItemServiceImpl implements ItemService {
                 .map(ItemMapper::toItemDto).collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public Long getOwnerId(Long itemId) {
         return itemRepository.findById(itemId)
@@ -125,6 +132,7 @@ public class ItemServiceImpl implements ItemService {
                 .getOwnerId();
     }
 
+    @Transactional
     @Override
     public CommentDto addComment(Long itemId, Long userId, CommentDto commentDto) {
         Item item = itemRepository.findById(itemId)

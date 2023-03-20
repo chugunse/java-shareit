@@ -2,12 +2,12 @@ package ru.practicum.shareit.user.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exceptions.model.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,12 +25,14 @@ public class UserServiceImpl implements UserService {
         return toUserDto(userRepository.save(toUser(userDto)));
     }
 
+    @Transactional
     @Override
     public UserDto getUserById(Long userId) {
         return toUserDto(userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("user по id %d не найден", userId))));
     }
 
+    @Transactional
     @Override
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream()
@@ -50,6 +52,7 @@ public class UserServiceImpl implements UserService {
         return toUserDto(userRepository.save(user));
     }
 
+    @Transactional
     @Override
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);

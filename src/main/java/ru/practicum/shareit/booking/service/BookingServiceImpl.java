@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoShort;
 import ru.practicum.shareit.booking.exception.BookingUnavailableException;
@@ -20,7 +21,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -32,6 +32,7 @@ public class BookingServiceImpl implements BookingService {
     private final UserService userService;
     private final ItemService itemService;
 
+    @Transactional
     @Override
     public BookingDto addBooking(BookingDtoShort bookingDtoShort, long bookerId) {
         log.info(String.format("BookingService addBooking от юзера %d", bookerId));
@@ -63,6 +64,7 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
+    @Transactional
     @Override
     public BookingDto getBookingById(Long bookingId, Long userId) {
         Booking booking = bookingRepository.findById(bookingId)
@@ -75,6 +77,7 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
+    @Transactional
     @Override
     public List<BookingDto> getAllBookingsByUser(String state, Long userId) {
         userService.getUserById(userId);
@@ -103,6 +106,7 @@ public class BookingServiceImpl implements BookingService {
         throw new BadRequestException(String.format("Unknown state: %s", state));
     }
 
+    @Transactional
     @Override
     public List<BookingDto> gettAllBookingsByOwner(String state, Long ownerId) {
         userService.getUserById(ownerId);
