@@ -7,6 +7,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +19,7 @@ import static ru.practicum.shareit.user.service.UserMapper.toUserDto;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
+    @Transactional
     @Override
     public UserDto addUser(UserDto userDto) {
         return toUserDto(userRepository.save(toUser(userDto)));
@@ -35,6 +37,7 @@ public class UserServiceImpl implements UserService {
                 .map(UserMapper::toUserDto).collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public UserDto updateUser(UserDto userDto, Long userId) {
         User user = toUser(getUserById(userId));
