@@ -2,9 +2,9 @@ package ru.practicum.shareit.user.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exceptions.model.DuplicateException;
 import ru.practicum.shareit.exceptions.model.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.util.List;
@@ -20,43 +20,35 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto addUser(UserDto userDto) {
-        checkDuplicatEmail(userDto);
-        return toUserDto(userRepository.addUser(toUser(userDto)));
+        return toUserDto(userRepository.save(toUser(userDto)));
     }
 
     @Override
     public UserDto getUserById(Long userId) {
-        return toUserDto(userRepository.getUserById(userId)
+        return toUserDto(userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("user по id %d не найден", userId))));
     }
 
     @Override
     public List<UserDto> getAllUsers() {
-        return userRepository.getAllUsers().stream()
+        return userRepository.findAll().stream()
                 .map(UserMapper::toUserDto).collect(Collectors.toList());
     }
 
     @Override
     public UserDto updateUser(UserDto userDto, Long userId) {
-        getUserById(userId);
-        userDto.setId(userId);
-        checkDuplicatEmail(userDto);
-        userDto.setId(userId);
-        return toUserDto(userRepository.updateUser(toUser(userDto)));
+        User user = toUser(getUserById(userId));
+        if (userDto.getName() != null) {
+            user.setName(userDto.getName());
+        }
+        if (userDto.getEmail() != null) {
+            user.setEmail(userDto.getEmail());
+        }
+        return toUserDto(userRepository.save(user));
     }
 
     @Override
     public void deleteUser(Long userId) {
-        userRepository.deleteUser(userId);
-    }
-
-    private void checkDuplicatEmail(UserDto userTest) {
-        if (userTest.getEmail() != null) {
-            if (getAllUsers().stream()
-                    .filter(user -> !user.getId().equals(userTest.getId()))
-                    .anyMatch(user -> user.getEmail().equals(userTest.getEmail()))) {
-                throw new DuplicateException("введенный email уже используется");
-            }
-        }
+        userRepository.deleteById(userId);
     }
 }

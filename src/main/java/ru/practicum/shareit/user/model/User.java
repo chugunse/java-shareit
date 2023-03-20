@@ -2,19 +2,23 @@ package ru.practicum.shareit.user.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+import javax.persistence.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "users")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank(message = "поле 'name' не может быть пустым")
+    @Column(nullable = false)
     private String name;
-    @NotBlank(message = "поле 'email' пустое")
-    @Email(message = "поле 'email' неподходящий формат")
+    @Column(nullable = false, unique = true)
     private String email;
 }
