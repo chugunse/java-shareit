@@ -7,12 +7,13 @@ import ru.practicum.shareit.exceptions.model.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
+import ru.practicum.shareit.util.UserMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.user.service.UserMapper.toUser;
-import static ru.practicum.shareit.user.service.UserMapper.toUserDto;
+import static ru.practicum.shareit.util.UserMapper.toUser;
+import static ru.practicum.shareit.util.UserMapper.toUserDto;
 
 @Service
 @AllArgsConstructor

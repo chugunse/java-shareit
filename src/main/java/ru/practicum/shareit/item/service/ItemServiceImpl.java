@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.booking.service.BookingMapper;
+import ru.practicum.shareit.util.BookingMapper;
 import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.exceptions.model.AccessException;
 import ru.practicum.shareit.exceptions.model.BadRequestException;
@@ -17,10 +17,13 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.CommentRepository;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.service.UserMapper;
+import ru.practicum.shareit.util.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.util.CommentMapper;
+import ru.practicum.shareit.util.ItemMapper;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -28,8 +31,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.item.service.ItemMapper.toItem;
-import static ru.practicum.shareit.item.service.ItemMapper.toItemDto;
+import static ru.practicum.shareit.util.ItemMapper.toItem;
+import static ru.practicum.shareit.util.ItemMapper.toItemDto;
 
 @Service
 @AllArgsConstructor
@@ -87,9 +90,12 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     @Override
     public List<ItemDto> getAllUsersItems(Long userId) {
-        List<ItemDto> item = itemRepository.findAllByOwnerId(userId)
-                .stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
-        return item.stream().map(this::setBookings).collect(Collectors.toList());
+        List<ItemDto> item = itemRepository.findAllByOwnerId(userId).stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
+        return item.stream()
+                .map(this::setBookings)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -121,7 +127,8 @@ public class ItemServiceImpl implements ItemService {
             return new ArrayList<>();
         }
         return itemRepository.searchAvailableItems(text).stream()
-                .map(ItemMapper::toItemDto).collect(Collectors.toList());
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional

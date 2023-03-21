@@ -15,10 +15,11 @@ import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.exceptions.model.BadRequestException;
 import ru.practicum.shareit.exceptions.model.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.service.ItemMapper;
+import ru.practicum.shareit.util.BookingMapper;
+import ru.practicum.shareit.util.ItemMapper;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.service.UserMapper;
+import ru.practicum.shareit.util.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
@@ -35,10 +36,8 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     @Override
     public BookingDto addBooking(BookingDtoShort bookingDtoShort, long bookerId) {
-        log.info(String.format("BookingService addBooking от юзера %d", bookerId));
         if (bookingDtoShort.getEnd().isBefore(bookingDtoShort.getStart()) ||
                 bookingDtoShort.getEnd().equals(bookingDtoShort.getStart())) {
-            log.info("таймдатаекс");
             throw new TimeDataException(String
                     .format("недопустимое время бронирования start = %s  end = %s",
                             bookingDtoShort.getStart(), bookingDtoShort.getEnd()));
@@ -58,7 +57,6 @@ public class BookingServiceImpl implements BookingService {
                     .build();
             return BookingMapper.toBookingDto(bookingRepository.save(booking));
         } else {
-            log.info("BookingUnavailableException");
             throw new BookingUnavailableException(String.format("%s с id = %d не доступна для бронирования",
                     item.getName(), item.getId()));
         }
@@ -76,6 +74,7 @@ public class BookingServiceImpl implements BookingService {
                     .format("пользователь с id=%d не имеет доступа к брони с id=%d", userId, bookingId));
         }
     }
+
 
     @Transactional
     @Override
