@@ -21,7 +21,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     //запросы по юзеру
 
-    List<Booking> findAllByBooker_IdOrderByStartDesc(long Id);
+    List<Booking> findAllByBooker_IdOrderByStartDesc(long id);
 
     List<Booking> findAllByBooker_IdAndStatusIsOrderByStartDesc(Long id, BookingStatus status);
 
@@ -33,7 +33,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findAllByBooker_IdAndStartIsAfterOrderByStartDesc(Long id, LocalDateTime time);
 
-    List<Booking> findAllByBooker_IdAndStartIsAfterAndStatusIsOrderByStartDesc(Long booker_id,
+    List<Booking> findAllByBooker_IdAndStartIsAfterAndStatusIsOrderByStartDesc(Long bookerId,
                                                                                LocalDateTime start,
                                                                                BookingStatus status);
 
