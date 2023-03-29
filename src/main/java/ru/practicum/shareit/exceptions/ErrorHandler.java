@@ -29,7 +29,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(ValidationException exception) {
-        log.warn("400 {}", exception.getMessage(), exception);
+        log.warn("400 {}", exception.getMessage());
         return new ErrorResponse(exception.getMessage());
     }
 

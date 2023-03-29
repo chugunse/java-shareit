@@ -2,10 +2,13 @@ package ru.practicum.shareit.item.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.util.BookingMapper;
+import ru.practicum.shareit.request.service.RequestService;
+import ru.practicum.shareit.util.*;
 import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.exceptions.model.AccessException;
 import ru.practicum.shareit.exceptions.model.BadRequestException;
@@ -17,12 +20,9 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.CommentRepository;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.util.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.util.CommentMapper;
-import ru.practicum.shareit.util.ItemMapper;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -44,12 +44,16 @@ public class ItemServiceImpl implements ItemService {
 
     private final CommentRepository commentRepository;
 
+    private final RequestService requestService;
+
     @Transactional
     @Override
     public ItemDto addItem(ItemDto itemDto, Long userId) {
         userService.getUserById(userId);
         Item item = toItem(itemDto);
         item.setOwnerId(userId);
+        item.setItemRequest(itemDto.getRequestId() != null ?
+                RequestMapper.fromDto(requestService.getById(userId, itemDto.getRequestId())) : null);
         return toItemDto(itemRepository.save(item));
     }
 
@@ -89,8 +93,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public List<ItemDto> getAllUsersItems(Long userId) {
-        List<ItemDto> item = itemRepository.findAllByOwnerId(userId).stream()
+    public List<ItemDto> getAllUsersItems(Long userId, int from, int size) {
+        Pageable page = PageRequest.of(from / size, size);
+        List<ItemDto> item = itemRepository.findAllByOwnerId(userId, page).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
         return item.stream()
@@ -122,11 +127,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public List<ItemDto> searchAvailableItems(String text) {
+    public List<ItemDto> searchAvailableItems(String text, int from, int size) {
+        Pageable page = PageRequest.of(from / size, size);
         if (text == null || text.isBlank()) {
             return new ArrayList<>();
         }
-        return itemRepository.searchAvailableItems(text).stream()
+        return itemRepository.searchAvailableItems(text, page).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
@@ -149,7 +155,6 @@ public class ItemServiceImpl implements ItemService {
 
         List<Booking> bookings = bookingRepository
                 .findAllByItem_IdAndBooker_IdAndStatusIsAndEndIsBefore(itemId, userId, BookingStatus.APPROVED, now);
-        System.out.println(bookings);
         if (bookings.isEmpty()) {
             throw new BadRequestException(String
                     .format("у юзара %s нет завершенных бронирований %S", user.getName(), item.getName()));
