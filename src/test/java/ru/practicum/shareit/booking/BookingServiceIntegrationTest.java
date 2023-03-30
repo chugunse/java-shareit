@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -41,7 +40,7 @@ public class BookingServiceIntegrationTest {
     private final BookingDtoShort bookingToCreate = BookingDtoShort.builder().itemId(1L).start(LocalDateTime.now().plusHours(1))
             .end(LocalDateTime.now().plusHours(2)).build();
 
-    void test(BookingDto booking, BookingStatus status, UserDto createdBooker, ItemDto itemDto){
+    void test(BookingDto booking, BookingStatus status, UserDto createdBooker, ItemDto itemDto) {
         assertThat(booking.getId(), equalTo(1L));
         assertThat(booking.getStart(), equalTo(bookingToCreate.getStart()));
         assertThat(booking.getEnd(), equalTo(bookingToCreate.getEnd()));

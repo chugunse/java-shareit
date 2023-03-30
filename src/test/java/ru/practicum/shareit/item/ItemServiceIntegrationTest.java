@@ -20,7 +20,6 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.transaction.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -175,7 +174,7 @@ public class ItemServiceIntegrationTest {
                 .build();
 
         @Test
-        void addComment(){
+        void addComment() {
             UserDto owner = userService.addUser(userDto);
             UserDto commentator = userService.addUser(requester);
             ItemDto item = itemService.addItem(itemDto, 1L);
