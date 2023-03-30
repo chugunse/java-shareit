@@ -2,6 +2,9 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -32,11 +35,20 @@ public class BookingServiceIntegrationTest {
     private final BookingService bookingService;
     private final UserService userService;
     private final ItemService itemService;
-    UserDto owner = new UserDto(null, "testUser", "test@email.com");
-    UserDto booker = new UserDto(null, "testUser2", "test2@email.com");
-    ItemDto itemDtoToCreate = ItemDto.builder().name("testItem").description("testDescription").available(true).build();
-    BookingDtoShort bookingToCreate = BookingDtoShort.builder().itemId(1L).start(LocalDateTime.now().plusHours(1))
+    private final UserDto owner = new UserDto(null, "testUser", "test@email.com");
+    private final UserDto booker = new UserDto(null, "testUser2", "test2@email.com");
+    private final ItemDto itemDtoToCreate = ItemDto.builder().name("testItem").description("testDescription").available(true).build();
+    private final BookingDtoShort bookingToCreate = BookingDtoShort.builder().itemId(1L).start(LocalDateTime.now().plusHours(1))
             .end(LocalDateTime.now().plusHours(2)).build();
+
+    void test(BookingDto booking, BookingStatus status, UserDto createdBooker, ItemDto itemDto){
+        assertThat(booking.getId(), equalTo(1L));
+        assertThat(booking.getStart(), equalTo(bookingToCreate.getStart()));
+        assertThat(booking.getEnd(), equalTo(bookingToCreate.getEnd()));
+        assertThat(booking.getBooker(), equalTo(createdBooker));
+        assertThat(booking.getItem().getId(), equalTo(itemDto.getId()));
+        assertThat(booking.getStatus(), equalTo(status));
+    }
 
     @Test
     void createBooking() {
@@ -46,12 +58,7 @@ public class BookingServiceIntegrationTest {
 
         BookingDto createdBooking = bookingService.addBooking(bookingToCreate, createdBooker.getId());
 
-        assertThat(createdBooking.getId(), equalTo(1L));
-        assertThat(createdBooking.getStart(), equalTo(bookingToCreate.getStart()));
-        assertThat(createdBooking.getEnd(), equalTo(bookingToCreate.getEnd()));
-        assertThat(createdBooking.getBooker(), equalTo(createdBooker));
-        assertThat(createdBooking.getItem().getId(), equalTo(itemDto.getId()));
-        assertThat(createdBooking.getStatus(), equalTo(BookingStatus.WAITING));
+        test(createdBooking, BookingStatus.WAITING, createdBooker, itemDto);
     }
 
     @Test
@@ -63,218 +70,70 @@ public class BookingServiceIntegrationTest {
 
         BookingDto returnedBooking = bookingService.getBookingById(1L, 2L);
 
-        assertThat(returnedBooking.getId(), equalTo(1L));
-        assertThat(returnedBooking.getStart(), equalTo(bookingToCreate.getStart()));
-        assertThat(returnedBooking.getEnd(), equalTo(bookingToCreate.getEnd()));
-        assertThat(returnedBooking.getBooker(), equalTo(createdBooker));
-        assertThat(returnedBooking.getItem().getId(), equalTo(itemDto.getId()));
-        assertThat(returnedBooking.getStatus(), equalTo(BookingStatus.WAITING));
+        test(returnedBooking, BookingStatus.WAITING, createdBooker, itemDto);
     }
 
-    @Test
-    void approveBooking_approve() {
+    @ParameterizedTest
+    @CsvSource(value = {
+            "false, REJECTED",
+            "true, APPROVED"
+    })
+    void approveBooking_approve(boolean approve, BookingStatus status) {
         userService.addUser(owner);
         UserDto createdBooker = userService.addUser(booker);
         ItemDto itemDto = itemService.addItem(itemDtoToCreate, 1L);
         bookingService.addBooking(bookingToCreate, createdBooker.getId());
-        BookingDto approvedBooking = bookingService.approve(1L, 1L, true);
+        BookingDto approvedBooking = bookingService.approve(1L, 1L, approve);
 
-        assertThat(approvedBooking.getId(), equalTo(1L));
-        assertThat(approvedBooking.getStart(), equalTo(bookingToCreate.getStart()));
-        assertThat(approvedBooking.getEnd(), equalTo(bookingToCreate.getEnd()));
-        assertThat(approvedBooking.getBooker(), equalTo(createdBooker));
-        assertThat(approvedBooking.getItem().getId(), equalTo(itemDto.getId()));
-        assertThat(approvedBooking.getStatus(), equalTo(BookingStatus.APPROVED));
+        test(approvedBooking, status, createdBooker, itemDto);
     }
 
-    @Test
-    void approveBooking_reject() {
-        userService.addUser(owner);
-        UserDto createdBooker = userService.addUser(booker);
-        ItemDto itemDto = itemService.addItem(itemDtoToCreate, 1L);
-        bookingService.addBooking(bookingToCreate, createdBooker.getId());
-        BookingDto approvedBooking = bookingService.approve(1L, 1L, false);
-
-        assertThat(approvedBooking.getId(), equalTo(1L));
-        assertThat(approvedBooking.getStart(), equalTo(bookingToCreate.getStart()));
-        assertThat(approvedBooking.getEnd(), equalTo(bookingToCreate.getEnd()));
-        assertThat(approvedBooking.getBooker(), equalTo(createdBooker));
-        assertThat(approvedBooking.getItem().getId(), equalTo(itemDto.getId()));
-        assertThat(approvedBooking.getStatus(), equalTo(BookingStatus.REJECTED));
-    }
-
-    @Test
-    void getAllBookingsByUser_ALL() {
-        userService.addUser(owner);
-        UserDto createdBooker = userService.addUser(booker);
-        itemService.addItem(itemDtoToCreate, 1L);
-        BookingDto bookingDto = bookingService.addBooking(bookingToCreate, createdBooker.getId());
-
-        List<BookingDto> userBookingsList = bookingService.getAllBookingsByUser("ALL", 2L, 0, 10);
-        assertThat(userBookingsList, hasSize(1));
-        assertThat(userBookingsList.get(0).getId(), equalTo(bookingDto.getId()));
-    }
-
-    @Test
-    void getAllBookingsByUser_CURRENT() {
+    @ParameterizedTest
+    @CsvSource(value = {
+            "ALL, 1, 2, true",
+            "CURRENT, -1, 2, true",
+            "PAST, -2, -1, true",
+            "FUTURE, 1, 2, true",
+            "WAITING, 1, 2, true",
+            "REJECTED, 1, 2, false"
+    })
+    void getAllBookingsByUser_ALL(String status, int start, int end, boolean approve) {
         BookingDtoShort booking = BookingDtoShort.builder().itemId(1L)
-                .start(LocalDateTime.now().minusHours(1))
-                .end(LocalDateTime.now().plusHours(2)).build();
+                .start(LocalDateTime.now().plusHours(start))
+                .end(LocalDateTime.now().plusHours(end)).build();
         userService.addUser(owner);
         UserDto createdBooker = userService.addUser(booker);
         itemService.addItem(itemDtoToCreate, 1L);
         BookingDto bookingDto = bookingService.addBooking(booking, createdBooker.getId());
-
-        List<BookingDto> userBookingsList = bookingService.getAllBookingsByUser("CURRENT", 2L, 0, 10);
+        if (!approve) {
+            bookingService.approve(bookingDto.getId(), 1L, approve);
+        }
+        List<BookingDto> userBookingsList = bookingService.getAllBookingsByUser(status, 2L, 0, 10);
         assertThat(userBookingsList, hasSize(1));
         assertThat(userBookingsList.get(0).getId(), equalTo(bookingDto.getId()));
     }
 
-    @Test
-    void getAllBookingsByUser_PAST() {
+    @ParameterizedTest
+    @CsvSource(value = {
+            "ALL, 1, 2, true",
+            "CURRENT, -1, 2, true",
+            "PAST, -2, -1, true",
+            "FUTURE, 1, 2, true",
+            "WAITING, 1, 2, true",
+            "REJECTED, 1, 2, false"
+    })
+    void getAllBookingsByOwner_ALL(String status, int start, int end, boolean approve) {
         BookingDtoShort booking = BookingDtoShort.builder().itemId(1L)
-                .start(LocalDateTime.now().minusHours(2))
-                .end(LocalDateTime.now().minusHours(1)).build();
+                .start(LocalDateTime.now().plusHours(start))
+                .end(LocalDateTime.now().plusHours(end)).build();
         userService.addUser(owner);
         UserDto createdBooker = userService.addUser(booker);
         itemService.addItem(itemDtoToCreate, 1L);
         BookingDto bookingDto = bookingService.addBooking(booking, createdBooker.getId());
-
-        List<BookingDto> userBookingsList = bookingService.getAllBookingsByUser("PAST", 2L, 0, 10);
-        assertThat(userBookingsList, hasSize(1));
-        assertThat(userBookingsList.get(0).getId(), equalTo(bookingDto.getId()));
-    }
-
-    @Test
-    void getAllBookingsByUser_FUTURE() {
-        BookingDtoShort booking = BookingDtoShort.builder().itemId(1L)
-                .start(LocalDateTime.now().plusHours(1))
-                .end(LocalDateTime.now().plusHours(2)).build();
-        userService.addUser(owner);
-        UserDto createdBooker = userService.addUser(booker);
-        itemService.addItem(itemDtoToCreate, 1L);
-        BookingDto bookingDto = bookingService.addBooking(booking, createdBooker.getId());
-
-        List<BookingDto> userBookingsList = bookingService.getAllBookingsByUser("FUTURE", 2L, 0, 10);
-        assertThat(userBookingsList, hasSize(1));
-        assertThat(userBookingsList.get(0).getId(), equalTo(bookingDto.getId()));
-    }
-
-    @Test
-    void getAllBookingsByUser_WAITING() {
-        BookingDtoShort booking = BookingDtoShort.builder().itemId(1L)
-                .start(LocalDateTime.now().plusHours(1))
-                .end(LocalDateTime.now().plusHours(2)).build();
-        userService.addUser(owner);
-        UserDto createdBooker = userService.addUser(booker);
-        itemService.addItem(itemDtoToCreate, 1L);
-        BookingDto bookingDto = bookingService.addBooking(booking, createdBooker.getId());
-
-        List<BookingDto> userBookingsList = bookingService.getAllBookingsByUser("WAITING", 2L, 0, 10);
-        assertThat(userBookingsList, hasSize(1));
-        assertThat(userBookingsList.get(0).getId(), equalTo(bookingDto.getId()));
-    }
-
-    @Test
-    void getAllBookingsByUser_REJECTED() {
-        BookingDtoShort booking = BookingDtoShort.builder().itemId(1L)
-                .start(LocalDateTime.now().plusHours(1))
-                .end(LocalDateTime.now().plusHours(2)).build();
-        userService.addUser(owner);
-        UserDto createdBooker = userService.addUser(booker);
-        itemService.addItem(itemDtoToCreate, 1L);
-        BookingDto bookingDto = bookingService.addBooking(booking, createdBooker.getId());
-        bookingService.approve(bookingDto.getId(), 1L, false);
-
-        List<BookingDto> userBookingsList = bookingService.getAllBookingsByUser("REJECTED", 2L, 0, 10);
-        assertThat(userBookingsList, hasSize(1));
-        assertThat(userBookingsList.get(0).getId(), equalTo(bookingDto.getId()));
-    }
-
-    @Test
-    void getAllBookingsByOwner_ALL() {
-        userService.addUser(owner);
-        UserDto createdBooker = userService.addUser(booker);
-        itemService.addItem(itemDtoToCreate, 1L);
-        BookingDto bookingDto = bookingService.addBooking(bookingToCreate, createdBooker.getId());
-
-        List<BookingDto> userBookingsList = bookingService.gettAllBookingsByOwner("ALL", 1L, 0, 10);
-        assertThat(userBookingsList, hasSize(1));
-        assertThat(userBookingsList.get(0).getId(), equalTo(bookingDto.getId()));
-    }
-
-    @Test
-    void getAllBookingsByOwner_CURRENT() {
-        BookingDtoShort booking = BookingDtoShort.builder().itemId(1L)
-                .start(LocalDateTime.now().minusHours(1))
-                .end(LocalDateTime.now().plusHours(2)).build();
-        userService.addUser(owner);
-        UserDto createdBooker = userService.addUser(booker);
-        itemService.addItem(itemDtoToCreate, 1L);
-        BookingDto bookingDto = bookingService.addBooking(booking, createdBooker.getId());
-
-        List<BookingDto> userBookingsList = bookingService.gettAllBookingsByOwner("CURRENT", 1L, 0, 10);
-        assertThat(userBookingsList, hasSize(1));
-        assertThat(userBookingsList.get(0).getId(), equalTo(bookingDto.getId()));
-    }
-
-    @Test
-    void getAllBookingsByOwner_PAST() {
-        BookingDtoShort booking = BookingDtoShort.builder().itemId(1L)
-                .start(LocalDateTime.now().minusHours(2))
-                .end(LocalDateTime.now().minusHours(1)).build();
-        userService.addUser(owner);
-        UserDto createdBooker = userService.addUser(booker);
-        itemService.addItem(itemDtoToCreate, 1L);
-        BookingDto bookingDto = bookingService.addBooking(booking, createdBooker.getId());
-
-        List<BookingDto> userBookingsList = bookingService.gettAllBookingsByOwner("PAST", 1L, 0, 10);
-        assertThat(userBookingsList, hasSize(1));
-        assertThat(userBookingsList.get(0).getId(), equalTo(bookingDto.getId()));
-    }
-
-    @Test
-    void getAllBookingsByOwner_FUTURE() {
-        BookingDtoShort booking = BookingDtoShort.builder().itemId(1L)
-                .start(LocalDateTime.now().plusHours(1))
-                .end(LocalDateTime.now().plusHours(2)).build();
-        userService.addUser(owner);
-        UserDto createdBooker = userService.addUser(booker);
-        itemService.addItem(itemDtoToCreate, 1L);
-        BookingDto bookingDto = bookingService.addBooking(booking, createdBooker.getId());
-
-        List<BookingDto> userBookingsList = bookingService.gettAllBookingsByOwner("FUTURE", 1L, 0, 10);
-        assertThat(userBookingsList, hasSize(1));
-        assertThat(userBookingsList.get(0).getId(), equalTo(bookingDto.getId()));
-    }
-
-    @Test
-    void getAllBookingsByOwner_WAITING() {
-        BookingDtoShort booking = BookingDtoShort.builder().itemId(1L)
-                .start(LocalDateTime.now().plusHours(1))
-                .end(LocalDateTime.now().plusHours(2)).build();
-        userService.addUser(owner);
-        UserDto createdBooker = userService.addUser(booker);
-        itemService.addItem(itemDtoToCreate, 1L);
-        BookingDto bookingDto = bookingService.addBooking(booking, createdBooker.getId());
-
-        List<BookingDto> userBookingsList = bookingService.gettAllBookingsByOwner("WAITING", 1L, 0, 10);
-        assertThat(userBookingsList, hasSize(1));
-        assertThat(userBookingsList.get(0).getId(), equalTo(bookingDto.getId()));
-    }
-
-    @Test
-    void getAllBookingsByOwner_REJECTED() {
-        BookingDtoShort booking = BookingDtoShort.builder().itemId(1L)
-                .start(LocalDateTime.now().plusHours(1))
-                .end(LocalDateTime.now().plusHours(2)).build();
-        userService.addUser(owner);
-        UserDto createdBooker = userService.addUser(booker);
-        itemService.addItem(itemDtoToCreate, 1L);
-        BookingDto bookingDto = bookingService.addBooking(booking, createdBooker.getId());
-        bookingService.approve(bookingDto.getId(), 1L, false);
-
-        List<BookingDto> userBookingsList = bookingService.gettAllBookingsByOwner("REJECTED", 1L, 0, 10);
+        if (!approve) {
+            bookingService.approve(bookingDto.getId(), 1L, approve);
+        }
+        List<BookingDto> userBookingsList = bookingService.gettAllBookingsByOwner(status, 1L, 0, 10);
         assertThat(userBookingsList, hasSize(1));
         assertThat(userBookingsList.get(0).getId(), equalTo(bookingDto.getId()));
     }

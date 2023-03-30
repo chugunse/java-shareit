@@ -34,36 +34,36 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class BookingServiceImplTest {
     @InjectMocks
-    BookingServiceImpl bookingService;
+    private BookingServiceImpl bookingService;
     @Mock
-    UserService userService;
+    private UserService userService;
     @Mock
-    ItemService itemService;
+    private ItemService itemService;
     @Mock
-    BookingRepository bookingRepository;
+    private BookingRepository bookingRepository;
 
-    User user = new User(1L, "testUser", "test@email.com");
-    UserDto userDto = new UserDto(1L, "testUser", "test@email.com");
-    BookingDtoShort bookingDtoShort = BookingDtoShort.builder()
+    private final User user = new User(1L, "testUser", "test@email.com");
+    private final UserDto userDto = new UserDto(1L, "testUser", "test@email.com");
+    private final BookingDtoShort bookingDtoShort = BookingDtoShort.builder()
             .start(LocalDateTime.now())
             .end(LocalDateTime.now().plusHours(1L))
             .itemId(1L)
             .build();
-    ItemDto itemDto = ItemDto.builder()
+    private final ItemDto itemDto = ItemDto.builder()
             .id(1L)
             .name("testItem")
             .description("testDescription")
             .available(true)
             .requestId(1L)
             .build();
-    Item item = Item.builder()
+    private final Item item = Item.builder()
             .id(1L)
             .name("testItem")
             .description("testDescription")
             .available(true)
             .ownerId(99L)
             .build();
-    Booking booking = Booking.builder()
+    private final Booking booking = Booking.builder()
             .booker(user)
             .id(1L)
             .status(BookingStatus.APPROVED)

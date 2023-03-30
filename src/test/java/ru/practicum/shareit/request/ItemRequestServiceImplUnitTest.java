@@ -29,22 +29,22 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ItemRequestServiceImplUnitTest {
     @InjectMocks
-    RequestServiceImpl requestService;
+    private RequestServiceImpl requestService;
     @Mock
-    RequestsRepository requestsRepository;
+    private RequestsRepository requestsRepository;
     @Mock
-    UserService userService;
+    private UserService userService;
 
     @Mock
-    ItemRepository itemRepository;
-    UserDto userDto = new UserDto(1L, "testUser", "test@email.com");
-    User user = new User(1L, "testUser", "test@email.com");
-    ItemRequest itemRequest = ItemRequest.builder()
+    private ItemRepository itemRepository;
+    private final UserDto userDto = new UserDto(1L, "testUser", "test@email.com");
+    private final User user = new User(1L, "testUser", "test@email.com");
+    private final ItemRequest itemRequest = ItemRequest.builder()
             .id((1L))
             .description("testDescription")
             .requester(user)
             .build();
-    ItemRequestDto itemRequestDto = ItemRequestDto.builder()
+    private final ItemRequestDto itemRequestDto = ItemRequestDto.builder()
             .id(1L)
             .description("testDescription")
             .requester(userDto)

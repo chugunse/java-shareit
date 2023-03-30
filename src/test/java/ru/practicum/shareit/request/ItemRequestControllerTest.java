@@ -24,16 +24,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = ItemRequestController.class)
 public class ItemRequestControllerTest {
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
     @MockBean
-    RequestService requestService;
+    private RequestService requestService;
     @Autowired
     private MockMvc mvc;
 
     private static final String BASE_PATH_REQUESTS = "/requests";
-    ItemRequestDto itemRequestToCreate = ItemRequestDto.builder().description("testDescription").build();
-    ItemRequestDto itemRequestToBack = ItemRequestDto.builder().id(1L).description("testDescription").build();
-    ItemRequestDto badItemRequestToCreate = ItemRequestDto.builder().description("").build();
+    private final ItemRequestDto itemRequestToCreate = ItemRequestDto.builder().description("testDescription").build();
+    private final ItemRequestDto itemRequestToBack = ItemRequestDto.builder().id(1L).description("testDescription").build();
+    private final ItemRequestDto badItemRequestToCreate = ItemRequestDto.builder().description("").build();
 
     @Test
     void addUserTest() throws Exception {

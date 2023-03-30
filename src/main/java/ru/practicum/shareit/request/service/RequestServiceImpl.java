@@ -52,7 +52,8 @@ public class RequestServiceImpl implements RequestService {
         userService.getUserById(userId);
         return requestsRepository.findAllByRequesterIdOrderByCreatedDesc(userId).stream()
                 .peek(itemRequest -> itemRequest.setItems(itemRepository.findAllByItemRequest(itemRequest)))
-                .map(RequestMapper::toDto).collect(Collectors.toList());
+                .map(RequestMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -61,7 +62,8 @@ public class RequestServiceImpl implements RequestService {
         Pageable page = PageRequest.of(from / size, size, Sort.by("created"));
         return requestsRepository.findAllByRequesterIdIsNot(userId, page).stream()
                 .peek(itemRequest -> itemRequest.setItems(itemRepository.findAllByItemRequest(itemRequest)))
-                .map(RequestMapper::toDto).collect(Collectors.toList());
+                .map(RequestMapper::toDto)
+                .collect(Collectors.toList());
 
     }
 }

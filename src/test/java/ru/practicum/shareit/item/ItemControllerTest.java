@@ -26,48 +26,48 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = ItemController.class)
 public class ItemControllerTest {
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
     @MockBean
-    ItemService itemService;
+    private ItemService itemService;
     @Autowired
     private MockMvc mvc;
 
     private static final String BASE_PATH_ITEMS = "/items";
-    ItemDto itemDto = ItemDto.builder()
+    private final ItemDto itemDto = ItemDto.builder()
             .id(1L)
             .name("testItem")
             .description("testDescription")
             .available(true)
             .requestId(1L)
             .build();
-    ItemDto itemDtoWithEmptyName = ItemDto.builder()
+    private final ItemDto itemDtoWithEmptyName = ItemDto.builder()
             .id(1L)
             .name("")
             .description("testDescription")
             .available(true)
             .requestId(1L)
             .build();
-    ItemDto itemDtoWithEmptyDescription = ItemDto.builder()
+    private final ItemDto itemDtoWithEmptyDescription = ItemDto.builder()
             .id(1L)
             .name("testItem")
             .description("")
             .available(true)
             .requestId(1L)
             .build();
-    ItemDto itemDtoWithoutAvailable = ItemDto.builder()
+    private final ItemDto itemDtoWithoutAvailable = ItemDto.builder()
             .id(1L)
             .name("testItem")
             .description("")
             .available(true)
             .requestId(1L)
             .build();
-    List<ItemDto> itemsDtoList = List.of(
+    private final List<ItemDto> itemsDtoList = List.of(
             new ItemDto(1L, "testName", "testName", true, null,
                     null, null, null),
             new ItemDto(2L, "testName2", "testDescription2", true, null,
                     null, null, null));
-    CommentDto commentDto = CommentDto.builder().id(1L).text("testText").authorName("testName").build();
-    CommentDto invalidCommentDto = CommentDto.builder().id(1L).text("").authorName("testName").build();
+    private final CommentDto commentDto = CommentDto.builder().id(1L).text("testText").authorName("testName").build();
+    private final CommentDto invalidCommentDto = CommentDto.builder().id(1L).text("").authorName("testName").build();
 
     @Test
     void createValidItem_shouldReturnJSONAndStatus200() throws Exception {

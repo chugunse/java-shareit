@@ -40,33 +40,33 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class ItemServiceImplUnitTest {
     @InjectMocks
-    ItemServiceImpl itemService;
+    private ItemServiceImpl itemService;
     @Mock
-    ItemRepository itemRepository;
+    private ItemRepository itemRepository;
     @Mock
-    BookingRepository bookingRepository;
+    private BookingRepository bookingRepository;
     @Mock
-    UserService userService;
+    private UserService userService;
     @Mock
-    CommentRepository commentRepository;
+    private CommentRepository commentRepository;
     @Mock
-    RequestService requestService;
+    private RequestService requestService;
 
-    UserDto userDto = new UserDto(1L, "testUser", "test@email.com");
-    User user = new User(1L, "testUser", "test@email.com");
-    ItemRequest itemRequest = ItemRequest.builder()
+    private final UserDto userDto = new UserDto(1L, "testUser", "test@email.com");
+    private final User user = new User(1L, "testUser", "test@email.com");
+    private final ItemRequest itemRequest = ItemRequest.builder()
             .id(1L)
             .description("testDescription")
             .requester(user)
             .items(new ArrayList<>())
             .build();
-    ItemRequestDto itemRequestDto = ItemRequestDto.builder()
+    private final ItemRequestDto itemRequestDto = ItemRequestDto.builder()
             .id(1L)
             .description("testDescription")
             .requester(userDto)
             .items(new ArrayList<>())
             .build();
-    Item item = Item.builder()
+    private final Item item = Item.builder()
             .id(1L)
             .name("testItem")
             .description("testDescription")
@@ -74,14 +74,14 @@ public class ItemServiceImplUnitTest {
             .itemRequest(itemRequest)
             .ownerId(1L)
             .build();
-    ItemDto itemDto = ItemDto.builder()
+    private final ItemDto itemDto = ItemDto.builder()
             .id(1L)
             .name("testItem")
             .description("testDescription")
             .available(true)
             .requestId(1L)
             .build();
-    ItemDto itemDtoUpdate = ItemDto.builder()
+    private final ItemDto itemDtoUpdate = ItemDto.builder()
             .id(1L)
             .name("testItemUpdate")
             .description("testDescriptionUpdate")
@@ -89,7 +89,7 @@ public class ItemServiceImplUnitTest {
             .requestId(1L)
             .build();
 
-    List<Booking> bookingList = List.of(Booking.builder()
+    private final List<Booking> bookingList = List.of(Booking.builder()
                     .id(1L).item(item).booker(user)
                     .start(LocalDateTime.now().minusHours(2L))
                     .end(LocalDateTime.now().minusHours(1L))
@@ -99,8 +99,8 @@ public class ItemServiceImplUnitTest {
                     .start(LocalDateTime.now().plusHours(1L))
                     .end(LocalDateTime.now().plusHours(2L))
                     .status(BookingStatus.WAITING).build());
-    Comment comment = Comment.builder().id(1L).text("testText").item(item).author(user).build();
-    CommentDto commentDto = CommentDto.builder().id(1L).text("testText").item(itemDto).authorName("testUser").build();
+    private final Comment comment = Comment.builder().id(1L).text("testText").item(item).author(user).build();
+    private final CommentDto commentDto = CommentDto.builder().id(1L).text("testText").item(itemDto).authorName("testUser").build();
 
     @Test
     void addItemTest() {

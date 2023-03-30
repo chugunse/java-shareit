@@ -27,14 +27,14 @@ import static org.mockito.Mockito.*;
 class UserServiceImplUnitTest {
 
     @InjectMocks
-    UserServiceImpl userService;
+    private UserServiceImpl userService;
     @Mock
-    UserRepository repository;
+    private UserRepository repository;
 
-    User user = new User(1L, "testUser", "test@email.com");
-    UserDto userDto = new UserDto(1L, "testUser", "test@email.com");
-    User user2 = new User(2L, "testUser2", "test2@email.com");
-    UserDto user2Dto = new UserDto(2L, "testUser2", "test2@email.com");
+    private final User user = new User(1L, "testUser", "test@email.com");
+    private final UserDto userDto = new UserDto(1L, "testUser", "test@email.com");
+    private final User user2 = new User(2L, "testUser2", "test2@email.com");
+    private final UserDto user2Dto = new UserDto(2L, "testUser2", "test2@email.com");
 
     @Test
     public void createUserTest() {

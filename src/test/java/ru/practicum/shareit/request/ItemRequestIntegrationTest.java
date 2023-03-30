@@ -31,9 +31,9 @@ public class ItemRequestIntegrationTest {
     private final ItemRepository itemRepository;
     private final UserService userService;
 
-    UserDto requester = new UserDto(null, "testUser", "test@email.com");
-    UserDto itemOwner = new UserDto(null, "testOwner", "Owner@email.com");
-    ItemRequestDto itemRequestToCreate = ItemRequestDto.builder().description("testDescr").build();
+    private final UserDto requester = new UserDto(null, "testUser", "test@email.com");
+    private final UserDto itemOwner = new UserDto(null, "testOwner", "Owner@email.com");
+    private final ItemRequestDto itemRequestToCreate = ItemRequestDto.builder().description("testDescr").build();
 
     @Test
     void createRequest() {

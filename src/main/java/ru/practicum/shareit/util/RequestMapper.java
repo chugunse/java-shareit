@@ -14,7 +14,10 @@ public class RequestMapper {
                 .created(itemRequest.getCreated())
                 .requester(UserMapper.toUserDto(itemRequest.getRequester()))
                 .items(itemRequest.getItems() != null ? itemRequest.getItems()
-                        .stream().map(ItemMapper::toItemDto).collect(Collectors.toList()) : new ArrayList<>())
+                        .stream()
+                        .map(ItemMapper::toItemDto)
+                        .collect(Collectors.toList())
+                        : new ArrayList<>())
                 .build();
     }
 

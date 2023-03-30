@@ -26,24 +26,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = BookingController.class)
 public class BookingControllerTest {
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
     @MockBean
-    BookingService bookingService;
+    private BookingService bookingService;
     @Autowired
     private MockMvc mvc;
 
     private static final String BASE_PATH_BOOKINGS = "/bookings";
-    ItemDto itemDto = ItemDto.builder().name("testItem").description("testDescription").available(true)
+    private final ItemDto itemDto = ItemDto.builder().name("testItem").description("testDescription").available(true)
             .build();
-    BookingDtoShort inputBookingDto = BookingDtoShort.builder()
+    private final BookingDtoShort inputBookingDto = BookingDtoShort.builder()
             .start(LocalDateTime.of(2222, 12, 12, 12, 12, 12))
             .end(LocalDateTime.of(2223, 12, 12, 12, 12, 12))
             .itemId(1L).build();
-    BookingDtoShort invalidInputBookingDtoWithWrongStart = BookingDtoShort.builder()
+    private final BookingDtoShort invalidInputBookingDtoWithWrongStart = BookingDtoShort.builder()
             .start(LocalDateTime.of(1111, 12, 12, 12, 12, 12))
             .end(LocalDateTime.of(2223, 12, 12, 12, 12, 12))
             .itemId(1L).build();
-    BookingDto bookingDto = ru.practicum.shareit.booking.dto.BookingDto.builder()
+    private final BookingDto bookingDto = ru.practicum.shareit.booking.dto.BookingDto.builder()
             .start(LocalDateTime.of(2222, 12, 12, 12, 12, 12))
             .end(LocalDateTime.of(2223, 12, 12, 12, 12, 12))
             .item(itemDto)
