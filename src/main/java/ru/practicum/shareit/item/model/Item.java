@@ -1,9 +1,11 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
+import ru.practicum.shareit.request.model.ItemRequest;
 
 import javax.persistence.*;
 
+@SuppressWarnings("ALL")
 @Getter
 @Setter
 @Builder
@@ -23,6 +25,9 @@ public class Item {
     private Boolean available;
     @Column(name = "owner_id", nullable = false)
     private Long ownerId;
+    @ManyToOne
+    @JoinColumn(name = "request_id")
+    private ItemRequest itemRequest;
 
     public Item(Long id, String name, String description, Boolean available) {
         this.id = id;
