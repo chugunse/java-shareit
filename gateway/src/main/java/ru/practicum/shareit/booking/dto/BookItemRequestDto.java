@@ -6,8 +6,9 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookItemRequestDto {
