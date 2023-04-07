@@ -11,7 +11,7 @@ services:
       - shareit-server
     environment:
       - SHAREIT_SERVER_URL=http://shareit-server:9090
-      - TZ=Europe/Moscow
+#      - TZ=Europe/Moscow
 
   shareit-server:
     build: server
@@ -27,7 +27,7 @@ services:
       - DB_NAME=shareit
       - POSTGRES_USER=username
       - POSTGRES_PASSWORD=password
-      - TZ=Europe/Moscow
+#      - TZ=Europe/Moscow
 
   db:
     image: postgres:14-alpine
