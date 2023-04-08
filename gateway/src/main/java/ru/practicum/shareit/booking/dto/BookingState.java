@@ -18,6 +18,7 @@ public enum BookingState {
 	WAITING;
 
 	public static Optional<BookingState> from(String stringState) {
-		return Arrays.stream(values()).filter(i -> i.toString().equals(stringState)).findAny();
+		return Arrays.stream(values())
+				.filter(i -> i.toString().equals(stringState.toUpperCase())).findAny();
 	}
 }
