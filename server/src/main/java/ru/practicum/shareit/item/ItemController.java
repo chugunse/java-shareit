@@ -5,10 +5,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.util.Variables;
 
 import java.util.Collection;
 import java.util.List;
+
+import static ru.practicum.shareit.util.Variables.HEADER_USER_ID;
 
 @RestController
 @RequestMapping("/items")
@@ -18,19 +19,19 @@ public class ItemController {
 
     @PostMapping
     public ItemDto addItem(@RequestBody ItemDto itemDto,
-                           @RequestHeader(value = Variables.HEADER_USER_ID) Long userId) {
+                           @RequestHeader(value = HEADER_USER_ID) Long userId) {
         return itemService.addItem(itemDto, userId);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(@RequestBody ItemDto itemDto,
-                              @RequestHeader(value = Variables.HEADER_USER_ID) Long userId,
+                              @RequestHeader(value = HEADER_USER_ID) Long userId,
                               @PathVariable long itemId) {
         return itemService.updateItem(itemDto, itemId, userId);
     }
 
     @GetMapping
-    public List<ItemDto> getAllUsersItems(@RequestHeader(value = Variables.HEADER_USER_ID) Long userId,
+    public List<ItemDto> getAllUsersItems(@RequestHeader(value = HEADER_USER_ID) Long userId,
                                           @RequestParam(defaultValue = "0") Integer from,
                                           @RequestParam(defaultValue = "10") Integer size) {
         return itemService.getAllUsersItems(userId, from, size);
@@ -38,7 +39,7 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ItemDto getItemById(@PathVariable Long itemId,
-                               @RequestHeader(value = Variables.HEADER_USER_ID) Long userId) {
+                               @RequestHeader(value = HEADER_USER_ID) Long userId) {
         return itemService.getItemById(itemId, userId);
     }
 
@@ -51,7 +52,7 @@ public class ItemController {
 
     @PostMapping("/{itemId}/comment")
     public CommentDto addComment(@PathVariable Long itemId,
-                                 @RequestHeader(value = Variables.HEADER_USER_ID) Long userId,
+                                 @RequestHeader(value = HEADER_USER_ID) Long userId,
                                  @RequestBody CommentDto commentDto) {
         return itemService.addComment(itemId, userId, commentDto);
     }

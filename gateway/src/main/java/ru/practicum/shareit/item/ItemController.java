@@ -13,6 +13,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
+import static ru.practicum.shareit.util.Variables.HEADER_USER_ID;
+
 @Controller
 @RequestMapping(path = "/items")
 @RequiredArgsConstructor
@@ -20,7 +22,6 @@ import javax.validation.constraints.PositiveOrZero;
 @Validated
 public class ItemController {
     private final ItemClient itemClient;
-    public static final String HEADER_USER_ID = "X-Sharer-User-Id";
 
     @PostMapping
     public ResponseEntity<Object> addItem(@Valid @RequestBody ItemDto itemDto,

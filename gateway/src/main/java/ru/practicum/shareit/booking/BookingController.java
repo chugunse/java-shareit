@@ -15,6 +15,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
+import static ru.practicum.shareit.util.Variables.HEADER_USER_ID;
+
 @Controller
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
@@ -22,7 +24,6 @@ import javax.validation.constraints.PositiveOrZero;
 @Validated
 public class BookingController {
     private final BookingClient bookingClient;
-    public static final String HEADER_USER_ID = "X-Sharer-User-Id";
 
     @GetMapping
     public ResponseEntity<Object> getBookings(@RequestHeader(value = HEADER_USER_ID) long userId,
