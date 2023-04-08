@@ -1,10 +1,10 @@
 package ru.practicum.shareit.user.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {

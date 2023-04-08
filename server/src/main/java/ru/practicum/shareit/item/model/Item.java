@@ -1,14 +1,15 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.practicum.shareit.request.model.ItemRequest;
 
 import javax.persistence.*;
 
-@SuppressWarnings("ALL")
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity

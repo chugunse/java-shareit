@@ -1,7 +1,6 @@
 package ru.practicum.shareit.request.dto;
 
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -12,7 +11,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@EqualsAndHashCode
 @Builder
 public class ItemRequestDto {
     private Long id;
