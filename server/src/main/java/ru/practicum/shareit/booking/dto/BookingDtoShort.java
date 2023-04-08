@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Future;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
@@ -14,12 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookingDtoShort {
-    @NotNull
     private Long itemId;
-    @NotNull
-    @Future
     private LocalDateTime start;
-    @NotNull
-    @Future
     private LocalDateTime end;
 }
